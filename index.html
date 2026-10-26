@@ -988,6 +988,12 @@ body.in-page>*:not(#pv):not(#bgfx):not(.dock):not(svg):not(.lbx){display:none!im
 .lbx-p:hover,.lbx-nx:hover,.lbx-x:hover{background:rgba(255,255,255,.2)}
 .lbx-note{grid-column:1/-1;text-align:center;margin:0;padding:12px;font-size:12px;color:rgba(255,255,255,.55)}
 @media (max-width:620px){.lbx{grid-template-columns:44px 1fr 44px}.lbx-p,.lbx-nx{width:36px;height:36px;font-size:22px}}
+.pv-glass{padding-left:6px}
+.pv-home{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--glass-fg);background:var(--glass-hover);border:1px solid var(--glass-line);transition:background .2s,transform .2s}
+.pv-home:hover{background:rgba(255,255,255,.2);transform:translateY(-1px)}
+.pv-home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.pv-home svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:620px){.pv-home{width:34px;height:34px}}
 
 /* Industries marquee */
 .partners{padding-block:110px 40px;text-align:center}
@@ -1623,7 +1629,7 @@ body.in-page>*:not(#pv):not(#bgfx):not(.dock):not(svg):not(.lbx){display:none!im
   function pvHead(theme,back,href,crumb,eb,title,metas,tabs){
     var parts=crumb.split(' / '),links=['#work','#/programme'];
     var bc=parts.map(function(t,k){return (k<parts.length-1||tabs)?'<a href="'+links[k]+'">'+esc(t)+'</a>'+(k<parts.length-1?'<i aria-hidden="true">/</i>':''):'<b aria-current="page">'+esc(t)+'</b>';}).join('');
-    return '<div class="pv-bar"><nav class="pv-glass" aria-label="Breadcrumb"><span class="pv-crumb">'+bc+'</span>'+(tabs||'')+'<a class="pv-back" href="'+href+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>'+esc(back)+'</span></a></nav></div>'+
+    return '<div class="pv-bar"><nav class="pv-glass" aria-label="Breadcrumb"><a class="pv-home" href="#top" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></a><span class="pv-crumb">'+bc+'</span>'+(tabs||'')+'<a class="pv-back" href="'+href+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>'+esc(back)+'</span></a></nav></div>'+
       '<header class="hd '+esc(theme)+'"><div class="pv-in"><span class="eyebrow">'+esc(eb)+'</span><h1 id="pv-h">'+esc(title)+'</h1><div class="meta">'+metas.map(function(m){return '<span>'+esc(m)+'</span>';}).join('')+'</div></div></header>';
   }
   function pvHub(c){
