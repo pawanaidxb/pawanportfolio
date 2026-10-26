@@ -678,6 +678,18 @@ body.in-page>*:not(#pv):not(#bgfx):not(.dock):not(svg){display:none!important}
 .pv-crumb{position:relative;margin-left:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--glass-fg);opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 @media (max-width:620px){.pv-crumb{display:none}.pv-glass{padding:6px}}
 
+/* Full-width top bar: breadcrumb left, back right */
+.pv-bar{left:0;right:0;padding:0 var(--gut)}
+.pv-glass{flex:1;justify-content:space-between;gap:16px;padding:6px 6px 6px 18px;min-height:50px}
+.pv-crumb{display:flex;align-items:center;gap:8px;margin:0;opacity:1;min-width:0;overflow:hidden}
+.pv-crumb a{color:var(--glass-fg);opacity:.62;text-decoration:none;white-space:nowrap;transition:opacity .2s}
+.pv-crumb a:hover{opacity:1}
+.pv-crumb i{font-style:normal;opacity:.35}
+.pv-crumb b{font-weight:500;opacity:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pv-back{flex:none}
+.pv-back:hover{transform:translateX(-2px)}
+@media (max-width:620px){.pv-crumb{display:flex}.pv-crumb a,.pv-crumb i{display:none}.pv-crumb b{font-size:10px}.pv-glass{padding:6px 6px 6px 14px}}
+
 /* Industries marquee */
 .partners{padding-block:110px 40px;text-align:center}
 .partners h2{font-size:clamp(28px,3.6vw,48px);line-height:1.1;max-width:20ch;margin:10px auto 0}
@@ -1310,7 +1322,9 @@ body.in-page>*:not(#pv):not(#bgfx):not(.dock):not(svg){display:none!important}
   /* Programme page routing */
   var pv=document.getElementById('pv'),PROG=PUBLIC.air;
   function pvHead(theme,back,href,crumb,eb,title,metas){
-    return '<div class="pv-bar"><nav class="pv-glass" aria-label="Page"><a class="pv-back" href="'+href+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>'+esc(back)+'</span></a><span class="pv-crumb">'+esc(crumb)+'</span></nav></div>'+
+    var parts=crumb.split(' / '),links=['#work','#/programme'];
+    var bc=parts.map(function(t,k){return k<parts.length-1?'<a href="'+links[k]+'">'+esc(t)+'</a><i aria-hidden="true">/</i>':'<b aria-current="page">'+esc(t)+'</b>';}).join('');
+    return '<div class="pv-bar"><nav class="pv-glass" aria-label="Breadcrumb"><span class="pv-crumb">'+bc+'</span><a class="pv-back" href="'+href+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>'+esc(back)+'</span></a></nav></div>'+
       '<header class="hd '+esc(theme)+'"><div class="pv-in"><span class="eyebrow">'+esc(eb)+'</span><h1 id="pv-h">'+esc(title)+'</h1><div class="meta">'+metas.map(function(m){return '<span>'+esc(m)+'</span>';}).join('')+'</div></div></header>';
   }
   function pvHub(c){
