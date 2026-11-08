@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Echo UI · Design system pipeline</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#000000}
+h1,h2,h3{font-family:'Geist',-apple-system,'Segoe UI',sans-serif;letter-spacing:-0.035em;font-feature-settings:'ss01'}
+h1,h2{font-weight:300}h3{font-weight:400}
+button{font-family:inherit}
+@keyframes eu-step{0%{border-color:#303030;box-shadow:0 0 0 0 rgba(124,77,255,0);background:#1a1a1a;color:#a585ff}3%,13%{border-color:#a585ff;box-shadow:0 0 0 6px rgba(124,77,255,0.18),0 10px 36px rgba(124,77,255,0.45);background:#6b3bc4;color:#ffffff}19%,100%{border-color:#303030;box-shadow:0 0 0 0 rgba(124,77,255,0);background:#1a1a1a;color:#a585ff}}
+@keyframes eu-label{0%,19%,100%{color:rgba(255,255,255,0.85)}3%,13%{color:#ffffff}}
+@keyframes eu-dot{0%{left:-12px;opacity:0}15%{opacity:1}85%{opacity:1}100%{left:100%;opacity:0}}
+@keyframes eu-line{0%,100%{background-position:0 0}100%{background-position:24px 0}}
+.eu-node-ic{animation:eu-step 6s ease-in-out infinite}
+.eu-node-t{animation:eu-label 6s ease-in-out infinite}
+.eu-dot{position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:#c9b6ff;box-shadow:0 0 12px 3px rgba(165,133,255,0.8);animation:eu-dot 1s linear infinite}
+.eu-wire{background-image:linear-gradient(90deg,#424242 0 50%,transparent 50% 100%);background-size:12px 2px;animation:eu-line 1.2s linear infinite}
+@keyframes eu-grid{0%{background-position:0 0,0 0}100%{background-position:56px 56px,56px 56px}}
+@keyframes eu-orb-a{0%{transform:translate(-25%,-10%) scale(1)}50%{transform:translate(25%,12%) scale(1.25)}100%{transform:translate(-25%,-10%) scale(1)}}
+@keyframes eu-orb-b{0%{transform:translate(20%,8%) scale(1.15)}50%{transform:translate(-30%,-6%) scale(0.9)}100%{transform:translate(20%,8%) scale(1.15)}}
+.eu-bg-grid{background-image:linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 30%,#000 30%,transparent 100%);mask-image:radial-gradient(ellipse 70% 55% at 50% 30%,#000 30%,transparent 100%);animation:eu-grid 40s linear infinite}
+.eu-bg{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0}
+.eu-orb-a,.eu-orb-b{position:absolute;left:50%;border-radius:50%;filter:blur(40px);will-change:transform}
+.eu-orb-a{top:-200px;width:900px;height:700px;margin-left:-700px;background:radial-gradient(closest-side,rgba(124,77,255,0.38),rgba(124,77,255,0));animation:eu-orb-a 16s ease-in-out infinite}
+.eu-orb-b{top:-60px;width:800px;height:620px;margin-left:-40px;background:radial-gradient(closest-side,rgba(168,85,247,0.26),rgba(168,85,247,0));animation:eu-orb-b 20s ease-in-out infinite}
+@keyframes eu-wave{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes eu-breathe{0%,100%{opacity:0.55}50%{opacity:1}}
+.eu-waves{position:absolute;left:0;right:0;top:120px;height:560px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);animation:eu-breathe 12s ease-in-out infinite}
+.eu-wave{position:absolute;left:0;top:0;width:200%;height:100%;animation:eu-wave 48s linear infinite}
+.eu-wave-2{animation-duration:64s;animation-direction:reverse}
+.eu-wave-3{animation-duration:80s}
+.eu-hero-in{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.eu-node-ic,.eu-node-t,.eu-dot,.eu-wire,.eu-waves,.eu-wave,.eu-orb-a,.eu-orb-b{animation:none}}
+a{color:#a585ff;text-decoration:none}a:hover{color:#c9b6ff}
+.eu-btn:hover{filter:brightness(1.12)}
+.eu-ghost:hover{background:#1f1f1f}
+.eu-chip:hover{border-color:#a585ff}
+.eu-tab:hover{color:rgba(255,255,255,0.85)}
+.eu-btn:focus-visible,.eu-ghost:focus-visible,.eu-chip:focus-visible,.eu-tab:focus-visible{outline:2px solid #a585ff;outline-offset:2px}
+@media (max-width:720px){.eu-hide-sm{display:none}}
+</style>
+
+<style>html{scroll-behavior:smooth}.eu-back{position:fixed;left:16px;bottom:16px;z-index:50;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:999px;background:rgba(20,20,20,.85);border:1px solid #424242;color:#fff;font:500 14px 'Geist',sans-serif;backdrop-filter:blur(10px)}.eu-back:hover{color:#fff;background:#1f1f1f}</style>
+</head>
+<body>
+
+<div style="background: #000000; color: rgba(255,255,255,0.85); font-family: 'Geist', -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 1.5; min-height: 100vh;">
+
+<!-- Announcement -->
+<div style="display: flex; justify-content: center; padding: 10px 16px; background: #1a1230; border-bottom: 1px solid #3a2766; font-size: 14px; text-align: center;">
+<p style="margin: 0; color: rgba(255,255,255,0.85);"><span style="display: inline-block; padding: 0 8px; margin-right: 8px; border-radius: 4px; background: #6b3bc4; color: #ffffff; font-size: 12px; font-weight: 600; line-height: 20px;">New</span><code style="font-family: 'Geist Mono', ui-monospace, Menlo, monospace;">design-system.md</code> now covers every token and every component, ready for any AI tool. <a href="#for-ai">See how</a></p>
+</div>
+
+<!-- Nav -->
+<header style="position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #303030;">
+<nav aria-label="Main" style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px;">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.85); font-weight: 600; font-size: 18px;">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="7" fill="#6b3bc4"></rect><circle cx="10" cy="14" r="3.5" fill="none" stroke="#ffffff" stroke-width="2"></circle><circle cx="18" cy="14" r="3.5" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.6"></circle></svg>
+Echo UI
+</a>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 24px; flex: 1 1 auto; font-size: 15px;">
+<a href="#how" style="color: rgba(255,255,255,0.65);">How it works</a>
+<a href="#pipeline" style="color: rgba(255,255,255,0.65);">Pipeline</a>
+<a href="#film" style="color: rgba(255,255,255,0.65);">Film</a>
+<a href="#for-ai" style="color: rgba(255,255,255,0.65);">For AI tools</a>
+<a href="#roadmap" style="color: rgba(255,255,255,0.65);">Roadmap</a>
+</div>
+<div style="display: flex; gap: 12px;">
+<a class="eu-btn" href="#pipeline" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; background: #6b3bc4; color: #ffffff; font-size: 15px; font-weight: 600;">See the pipeline</a>
+</div>
+</nav>
+</header>
+
+<!-- Hero -->
+<div style="position: relative; overflow: hidden;">
+<div aria-hidden="true" class="eu-bg">
+<div class="eu-orb-a"></div>
+<div class="eu-orb-b"></div>
+<div class="eu-waves">
+<svg class="eu-wave" viewBox="0 0 2880 560" preserveAspectRatio="none" fill="none"><path d="M0 280 C240 170 480 170 720 280 C960 390 1200 390 1440 280 C1680 170 1920 170 2160 280 C2400 390 2640 390 2880 280" stroke="rgba(165,133,255,0.22)" stroke-width="1.5"></path><path d="M0 300 C240 200 480 200 720 300 C960 400 1200 400 1440 300 C1680 200 1920 200 2160 300 C2400 400 2640 400 2880 300" stroke="rgba(165,133,255,0.12)" stroke-width="1"></path></svg>
+<svg class="eu-wave eu-wave-2" viewBox="0 0 2880 560" preserveAspectRatio="none" fill="none"><path d="M0 240 C240 330 480 330 720 240 C960 150 1200 150 1440 240 C1680 330 1920 330 2160 240 C2400 150 2640 150 2880 240" stroke="rgba(196,160,255,0.16)" stroke-width="1.25"></path><path d="M0 360 C240 450 480 450 720 360 C960 270 1200 270 1440 360 C1680 450 1920 450 2160 360 C2400 270 2640 270 2880 360" stroke="rgba(124,77,255,0.18)" stroke-width="1"></path></svg>
+<svg class="eu-wave eu-wave-3" viewBox="0 0 2880 560" preserveAspectRatio="none" fill="none"><path d="M0 200 C240 120 480 120 720 200 C960 280 1200 280 1440 200 C1680 120 1920 120 2160 200 C2400 280 2640 280 2880 200" stroke="rgba(165,133,255,0.10)" stroke-width="1"></path><path d="M0 400 C240 480 480 480 720 400 C960 320 1200 320 1440 400 C1680 480 1920 480 2160 400 C2400 320 2640 320 2880 400" stroke="rgba(168,85,247,0.12)" stroke-width="1.25"></path></svg>
+</div>
+</div>
+<section id="top" class="eu-hero-in" style="position: relative; max-width: 1200px; margin: 0 auto; padding: 112px 24px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #a585ff;">Design system automation</p>
+<h1 style="margin: 0; max-width: 980px; font-size: clamp(44px, 7vw, 84px); line-height: 1.02; font-weight: 300; letter-spacing: -0.04em; color: #ffffff;">Change it once in Figma. It ships everywhere.</h1>
+<p style="margin: 0; max-width: 720px; font-size: 20px; line-height: 1.55; color: rgba(255,255,255,0.65);">Echo UI turns every Figma update into code, Storybook and AI-ready docs. AI writes the components, a person approves them, and AI checks that everything stays aligned.</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+<a class="eu-btn" href="#pipeline" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border-radius: 999px; background: #6b3bc4; color: #ffffff; font-size: 16px; font-weight: 600;">How the pipeline works</a>
+<a class="eu-ghost" href="#for-ai" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border: 1px solid #424242; border-radius: 999px; color: rgba(255,255,255,0.85); font-size: 16px;">Built for AI tools</a>
+</div>
+
+<!-- Hero film -->
+<div id="film" style="margin-top: 32px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
+<div style="width: 100%; border-radius: 20px; overflow: hidden; border: 1px solid #303030; background: #000000; box-shadow: 0 0 0 1px #3a2766, 0 24px 80px 0 rgba(124,77,255,0.25);">
+<video id="eu-film" src="echo-ui/film.mp4" poster="echo-ui/poster.jpg" autoplay muted loop controls playsinline preload="metadata" aria-label="Echo UI film: change it once in Figma and it ships as code, docs and Storybook" style="display: block; width: 100%; aspect-ratio: 16 / 9; background: #000000;"></video>
+</div>
+</div>
+
+<!-- Hero pipeline strip -->
+<div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+<p style="margin: 0; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45);">From one change to everywhere</p>
+<div style="width: 100%; overflow-x: auto; padding: 8px 0 12px;">
+<ol aria-label="The Echo UI process flow" style="margin: 0 auto; padding: 0; list-style: none; min-width: 980px; display: flex; align-items: flex-start;">
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 0s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l3 3-3 3-3-3z"></path><path d="M6 9l3 3-3 3-3-3z"></path><path d="M18 9l3 3-3 3-3-3z"></path><path d="M12 15l3 3-3 3-3-3z"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 0s;">Figma</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">Change variables or a component</span>
+</li>
+<li aria-hidden="true" class="eu-wire" style="flex: 0 1 56px; position: relative; height: 2px; margin-top: 36px;"><span class="eu-dot" style="animation-delay: 0.5s;"></span></li>
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 1s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="4"></circle><circle cx="16" cy="8" r="4"></circle><circle cx="12" cy="15.5" r="4"></circle><path d="M12 21v1"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 1s;">Tokens Studio</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">Pushes the tokens to GitHub</span>
+</li>
+<li aria-hidden="true" class="eu-wire" style="flex: 0 1 56px; position: relative; height: 2px; margin-top: 36px;"><span class="eu-dot" style="animation-delay: 0.2s;"></span></li>
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 2s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="5" r="2.2"></circle><circle cx="6" cy="19" r="2.2"></circle><circle cx="18" cy="8" r="2.2"></circle><path d="M6 7.2v9.6"></path><path d="M18 10.2c0 4-6 3.5-11.2 7.3"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 2s;">GitHub + AI</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">Builds the code. AI writes new components</span>
+</li>
+<li aria-hidden="true" class="eu-wire" style="flex: 0 1 56px; position: relative; height: 2px; margin-top: 36px;"><span class="eu-dot" style="animation-delay: 0.7s;"></span></li>
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 3s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.5"></circle><path d="M3.5 20c0-3.6 2.9-6 6.5-6 1.4 0 2.6.3 3.6.9"></path><path d="M15 18l2 2 4-4.5"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 3s;">Review</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">A person approves new components</span>
+</li>
+<li aria-hidden="true" class="eu-wire" style="flex: 0 1 56px; position: relative; height: 2px; margin-top: 36px;"><span class="eu-dot" style="animation-delay: 0.35s;"></span></li>
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 4s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"></rect><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M10.5 8.5v4l3.5-2z"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 4s;">Live</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">Repo, Storybook and design-system.md update</span>
+</li>
+<li aria-hidden="true" class="eu-wire" style="flex: 0 1 56px; position: relative; height: 2px; margin-top: 36px;"><span class="eu-dot" style="animation-delay: 0.85s;"></span></li>
+
+<li style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+<span class="eu-node-ic" style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; border: 1px solid #303030; background: #1a1a1a; color: #a585ff; animation-delay: 5s;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"></path><path d="M9 12l2 2 4-4.5"></path></svg></span>
+<span class="eu-node-t" style="font-size: 17px; font-weight: 600; animation-delay: 5s;">AI audit</span>
+<span style="max-width: 150px; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.55);">Checks everything still matches</span>
+</li>
+
+</ol>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Proof strip -->
+<section aria-label="Proof from the pilot" style="border-top: 1px solid #303030; border-bottom: 1px solid #303030; background: #0a0a0a;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 44px; font-weight: 600; color: #ffffff; line-height: 1.1;">22</span><span style="font-size: 15px; color: rgba(255,255,255,0.65);">design tokens synced from Figma variables</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 44px; font-weight: 600; color: #ffffff; line-height: 1.1;">24</span><span style="font-size: 15px; color: rgba(255,255,255,0.65);">components built from Figma, mapped with Code Connect</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 44px; font-weight: 600; color: #ffffff; line-height: 1.1;">~1 min</span><span style="font-size: 15px; color: rgba(255,255,255,0.65);">from a token push to a live Storybook</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 44px; font-weight: 600; color: #ffffff; line-height: 1.1;">2 themes</span><span style="font-size: 15px; color: rgba(255,255,255,0.65);">Light and Dark from one set of variables</span></div>
+</div>
+<p style="max-width: 1200px; margin: 0 auto; padding: 0 24px 28px; font-size: 13px; color: rgba(255,255,255,0.45);">Numbers from the pilot (proof of concept) run on a sample design system.</p>
+</section>
+
+<!-- Four jobs -->
+<section id="how" style="max-width: 1200px; margin: 0 auto; padding: 112px 24px 48px; display: flex; flex-direction: column; gap: 48px;">
+<div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #a585ff;">How it works</p>
+<h2 style="margin: 0; font-size: clamp(36px, 5vw, 56px); line-height: 1.08; font-weight: 300; color: #ffffff;">One source of truth. Four jobs done for you.</h2>
+<p style="margin: 0; font-size: 18px; color: rgba(255,255,255,0.65);">Figma stays the source of truth. Everything after it is automated, with one person approving new components.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 20px;">
+
+<article style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #303030; border-radius: 16px; background: #141414;">
+<span style="font-size: 13px; font-weight: 600; color: #a585ff;">01 · Sync</span>
+<h3 style="margin: 0; font-size: 24px; font-weight: 400; color: #ffffff;">Tokens flow on their own</h3>
+<p style="margin: 0; font-size: 15px; color: rgba(255,255,255,0.65);">Change a colour, spacing or radius in Figma and push. The code, docs and Storybook update in about a minute.</p>
+<div style="margin-top: auto; padding: 14px; border-radius: 10px; background: #000000; border: 1px solid #303030; font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.7;">
+<div style="color: rgba(255,255,255,0.45);">tokens.css</div>
+<div><span style="color: #a585ff;">--color-primary</span>: <span style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: #e60053; vertical-align: -1px;"></span> #e60053;</div>
+<div><span style="color: #a585ff;">--radius-md</span>: 8px;</div>
+<div><span style="color: #a585ff;">--spacing-md</span>: 16px;</div>
+</div>
+</article>
+
+<article style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #303030; border-radius: 16px; background: #141414;">
+<span style="font-size: 13px; font-weight: 600; color: #a585ff;">02 · Build</span>
+<h3 style="margin: 0; font-size: 24px; font-weight: 400; color: #ffffff;">AI writes the component</h3>
+<p style="margin: 0; font-size: 15px; color: rgba(255,255,255,0.65);">Publish a component in Figma. AI writes the code, styles and stories using tokens only, then opens a pull request for a person to approve.</p>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 10px; background: #000000; border: 1px solid #303030; font-size: 13px;">
+<div style="display: flex; align-items: center; gap: 8px;"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="#49aa19" stroke-width="2"></circle><path d="M5.5 8l2 2 3-4" fill="none" stroke="#49aa19" stroke-width="2"></path></svg><span>Input.jsx · Input.css · Input.stories.jsx</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="#49aa19" stroke-width="2"></circle><path d="M5.5 8l2 2 3-4" fill="none" stroke="#49aa19" stroke-width="2"></path></svg><span>Every colour is a token</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="#d89614" stroke-width="2"></circle><path d="M8 5v3.5" stroke="#d89614" stroke-width="2"></path></svg><span>Waiting for review</span></div>
+</div>
+</article>
+
+<article style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #303030; border-radius: 16px; background: #141414;">
+<span style="font-size: 13px; font-weight: 600; color: #a585ff;">03 · Document</span>
+<h3 style="margin: 0; font-size: 24px; font-weight: 400; color: #ffffff;">Docs that write themselves</h3>
+<p style="margin: 0; font-size: 15px; color: rgba(255,255,255,0.65);">Storybook shows every component in Light and Dark. One Markdown file describes the whole system for people and AI tools.</p>
+<div style="margin-top: auto; display: flex; gap: 8px; padding: 14px; border-radius: 10px; background: #000000; border: 1px solid #303030;">
+<div style="flex: 1; padding: 12px; border-radius: 8px; background: #ffffff; color: #171717; font-size: 12px; display: flex; flex-direction: column; gap: 8px;"><span>Light</span><span style="display: inline-flex; justify-content: center; padding: 6px; border-radius: 6px; background: #e60053; color: #ffffff; font-weight: 600;">Button</span></div>
+<div style="flex: 1; padding: 12px; border-radius: 8px; background: #121212; border: 1px solid #303030; color: #ebebeb; font-size: 12px; display: flex; flex-direction: column; gap: 8px;"><span>Dark</span><span style="display: inline-flex; justify-content: center; padding: 6px; border-radius: 6px; background: #ff94bb; color: #000000; font-weight: 600;">Button</span></div>
+</div>
+</article>
+
+<article style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #303030; border-radius: 16px; background: #141414;">
+<span style="font-size: 13px; font-weight: 600; color: #a585ff;">04 · Audit</span>
+<h3 style="margin: 0; font-size: 24px; font-weight: 400; color: #ffffff;">AI checks it all lines up</h3>
+<p style="margin: 0; font-size: 15px; color: rgba(255,255,255,0.65);">After every release, AI compares Figma, the code, Storybook and the Markdown file, and reports anything that drifted.</p>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 10px; background: #000000; border: 1px solid #303030; font-size: 13px;">
+<div style="display: flex; justify-content: space-between;"><span>Figma ↔ code</span><span style="color: #49aa19;">Aligned</span></div>
+<div style="display: flex; justify-content: space-between;"><span>Code ↔ Storybook</span><span style="color: #49aa19;">Aligned</span></div>
+<div style="display: flex; justify-content: space-between;"><span>Code ↔ design-system.md</span><span style="color: #49aa19;">Aligned</span></div>
+</div>
+</article>
+
+</div>
+</section>
+
+<!-- Pipeline -->
+<section id="pipeline" style="max-width: 1200px; margin: 0 auto; padding: 96px 24px; display: flex; flex-direction: column; gap: 40px;">
+<div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #a585ff;">The pipeline</p>
+<h2 style="margin: 0; font-size: clamp(36px, 5vw, 56px); line-height: 1.08; font-weight: 300; color: #ffffff;">Two flows. One source of truth.</h2>
+<p style="margin: 0; font-size: 18px; color: rgba(255,255,255,0.65);">Tokens go straight through. New components get one human review before they ship.</p>
+</div>
+<div id="eu-tabs" role="tablist" aria-label="Choose a flow" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px; border: 1px solid #303030; border-radius: 999px; background: #141414; align-self: flex-start;">
+
+</div>
+<p id="eu-intro" style="margin: 0; font-size: 17px; color: rgba(255,255,255,0.85);"></p>
+<ol id="eu-steps" style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;"></ol>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; color: rgba(255,255,255,0.65);">
+<span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #49aa19;"></span>Live: proven in the pilot</span>
+<span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #a585ff;"></span>Built: ready, not yet run end to end</span>
+<span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: #d89614;"></span>Next: designed, waiting on access</span>
+</div>
+</section>
+
+<!-- For AI -->
+<section id="for-ai" style="background: #f5f5f5; color: rgba(0,0,0,0.88);">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+<div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 20px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #5b2bb5;">Built for AI tools</p>
+<h2 style="margin: 0; font-size: clamp(36px, 5vw, 56px); line-height: 1.08; font-weight: 300; color: rgba(0,0,0,0.88);">One file. Any AI tool builds on-brand UI.</h2>
+<p style="margin: 0; font-size: 18px; color: rgba(0,0,0,0.65);"><code style="font-family: 'Geist Mono', ui-monospace, Menlo, monospace;">design-system.md</code> is rebuilt on every push. Give it to Claude, Cursor or any assistant, and it uses your real components and tokens instead of guessing.</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 16px;">
+<li style="display: flex; gap: 10px;"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="#6b3bc4" stroke-width="2"></path></svg>Rules first: use components, style with tokens only</li>
+<li style="display: flex; gap: 10px;"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="#6b3bc4" stroke-width="2"></path></svg>Every token with Light and Dark values</li>
+<li style="display: flex; gap: 10px;"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="#6b3bc4" stroke-width="2"></path></svg>Every component: props, allowed values, Figma mapping, example</li>
+<li style="display: flex; gap: 10px;"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="#6b3bc4" stroke-width="2"></path></svg>Always matches the shipped code, because it is built from it</li>
+</ul>
+</div>
+<div style="flex: 1 1 460px; min-width: 0; border-radius: 16px; background: #141414; border: 1px solid #303030; overflow: hidden; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);">
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #303030; font-size: 13px; color: rgba(255,255,255,0.65);"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5h7l3 3v10H3z" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg>design-system.md</div>
+<pre style="margin: 0; padding: 20px; overflow-x: auto; font-family: 'Geist Mono', ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.85); white-space: pre;"><span style="color: #a585ff;">#### Input</span>
+Matches the "Input" component set in Figma.
+
+- Import: import { Input } from "ds-poc";
+- Tokens used: --color-border --radius-md …
+
+| Prop     | Default  | Options                 |
+| size     | "small"  | small · medium · large  |
+| error    | false    | true · false            |
+| disabled | false    | true · false            |
+
+<span style="color: rgba(255,255,255,0.45);">```jsx</span>
+&lt;Input size="small" /&gt;
+<span style="color: rgba(255,255,255,0.45);">```</span></pre>
+</div>
+</div>
+</section>
+
+<!-- Integrations -->
+<section style="max-width: 1200px; margin: 0 auto; padding: 112px 24px 64px; display: flex; flex-direction: column; gap: 40px;">
+<div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #a585ff;">Works with the tools you have</p>
+<h2 style="margin: 0; font-size: clamp(32px, 4.5vw, 48px); line-height: 1.1; font-weight: 300; color: #ffffff;">No new platform. Just your tools, connected.</h2>
+</div>
+<div id="eu-tools" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;"></div>
+</section>
+
+<!-- Roadmap -->
+<section id="roadmap" style="max-width: 1200px; margin: 0 auto; padding: 64px 24px 112px; display: flex; flex-direction: column; gap: 40px;">
+<div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #a585ff;">Roadmap</p>
+<h2 style="margin: 0; font-size: clamp(32px, 4.5vw, 48px); line-height: 1.1; font-weight: 300; color: #ffffff;">Where we are, and what comes next.</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #274916; border-radius: 16px; background: #162312;">
+<span style="font-size: 14px; font-weight: 600; color: #49aa19;">Live in the pilot</span>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px;">
+<li>Figma to tokens.css, Markdown and Storybook in about a minute</li>
+<li>Light and Dark mode from Figma variables</li>
+<li>24 components built from Figma, incl. a full data table</li>
+<li>Code Connect: Dev Mode shows the real code</li>
+<li>design-system.md with every token and component</li>
+</ul>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 28px; border: 1px solid #594214; border-radius: 16px; background: #2b2111;">
+<span style="font-size: 14px; font-weight: 600; color: #d89614;">Next</span>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px;">
+<li>AI build step on the company AI gateway</li>
+<li>n8n relay: Figma publish starts the build</li>
+<li>Pull request review by a developer owner</li>
+<li>AI audit after every release</li>
+<li>Roll out from the pilot to Echo UI</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Closing CTA -->
+<section style="border-top: 1px solid #303030; background: #1a1230;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px;">
+<h2 style="margin: 0; max-width: 900px; font-size: clamp(36px, 5.5vw, 64px); line-height: 1.06; font-weight: 300; color: #ffffff;">Give your team a design system that keeps itself in sync.</h2>
+<p style="margin: 0; max-width: 640px; font-size: 18px; color: rgba(255,255,255,0.65);">Designers change Figma. Everything else follows.</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+<a class="eu-btn" href="#top" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border-radius: 999px; background: #6b3bc4; color: #ffffff; font-size: 16px; font-weight: 600;">Watch the film again</a>
+<a class="eu-ghost" href="#pipeline" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border: 1px solid #424242; border-radius: 999px; color: rgba(255,255,255,0.85); font-size: 16px;">Talk to the team</a>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid #303030;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: rgba(255,255,255,0.45);">
+<span>Echo UI · Design system automation</span>
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+<a href="#how" style="color: rgba(255,255,255,0.65);">How it works</a>
+<a href="#pipeline" style="color: rgba(255,255,255,0.65);">Pipeline</a>
+<a href="#for-ai" style="color: rgba(255,255,255,0.65);">For AI tools</a>
+<a href="#roadmap" style="color: rgba(255,255,255,0.65);">Roadmap</a>
+</div>
+</div>
+</footer>
+
+</div>
+
+<a class="eu-back" href="../#/programme/2">← Back to portfolio</a>
+<script>
+(function(){
+  var flow='tokens';
+  var TAG = {
+      Live: 'display: inline-flex; align-items: center; padding: 0 8px; border-radius: 4px; font-size: 12px; font-weight: 600; line-height: 22px; background: #162312; border: 1px solid #274916; color: #49aa19;',
+      Built: 'display: inline-flex; align-items: center; padding: 0 8px; border-radius: 4px; font-size: 12px; font-weight: 600; line-height: 22px; background: #1a1230; border: 1px solid #3a2766; color: #a585ff;',
+      Next: 'display: inline-flex; align-items: center; padding: 0 8px; border-radius: 4px; font-size: 12px; font-weight: 600; line-height: 22px; background: #2b2111; border: 1px solid #594214; color: #d89614;'
+    };
+    var FLOWS = {
+      tokens: {
+        intro: 'Token flow: fully automatic, no review needed.',
+        steps: [
+          { title: 'Change a variable in Figma', text: 'Update a colour, spacing or radius in Light or Dark mode.', tool: 'Figma variables', status: 'Live' },
+          { title: 'Push with Tokens Studio', text: 'One click sends tokens.json to GitHub.', tool: 'Tokens Studio → GitHub', status: 'Live' },
+          { title: 'Build the code and docs', text: 'A GitHub Action writes tokens.css and design-system.md and saves them to the repo.', tool: 'GitHub Actions', status: 'Live' },
+          { title: 'Storybook goes live', text: 'Storybook rebuilds and deploys, about a minute after the push.', tool: 'Storybook on GitHub Pages', status: 'Live' }
+        ]
+      },
+      components: {
+        intro: 'Component flow: AI does the work, a person approves it.',
+        steps: [
+          { title: 'Publish the component', text: 'The designer builds it in Figma with variables and publishes the library.', tool: 'Figma library', status: 'Live' },
+          { title: 'Relay the publish event', text: 'n8n hears the Figma publish and starts the GitHub build.', tool: 'n8n', status: 'Next' },
+          { title: 'Snapshot from Figma', text: 'The build saves the component data and an image from Figma.', tool: 'Figma REST API', status: 'Built' },
+          { title: 'AI writes the code', text: 'Claude writes the component, CSS and stories, following the repo rules and using tokens only.', tool: 'Claude in GitHub Actions', status: 'Next' },
+          { title: 'A person reviews', text: 'The change arrives as a pull request. A developer checks it and merges.', tool: 'Pull request', status: 'Next' },
+          { title: 'Everything updates', text: 'Repo, Storybook and design-system.md update. Code Connect shows the code in Dev Mode.', tool: 'GitHub · Storybook · Code Connect', status: 'Live' },
+          { title: 'AI audit', text: 'AI checks Figma, code, Storybook and the Markdown file agree, and flags any drift.', tool: 'Claude', status: 'Next' }
+        ]
+      }
+    };
+    
+  var tabBase='min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;';
+  var TABS=[{id:'tokens',label:'Token flow'},{id:'components',label:'Component flow'}];
+  var TOOLS=[
+        { name: 'Figma', role: 'Source of truth: variables and components' },
+        { name: 'Tokens Studio', role: 'Pushes tokens from Figma to GitHub' },
+        { name: 'GitHub', role: 'Holds the code and runs the builds' },
+        { name: 'GitHub Actions', role: 'Builds tokens, docs and Storybook' },
+        { name: 'Storybook', role: 'Live component library, Light and Dark' },
+        { name: 'Claude', role: 'Writes components and runs the audit' },
+        { name: 'n8n', role: 'Relays Figma publish events' },
+        { name: 'Code Connect', role: 'Shows real code in Figma Dev Mode' }
+      ];
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function render(){
+    var f=FLOWS[flow];
+    document.getElementById('eu-tabs').innerHTML=TABS.map(function(t){var on=t.id===flow;return '<button class="eu-tab" type="button" role="tab" data-id="'+t.id+'" aria-selected="'+on+'" style="'+tabBase+(on?' background: #6b3bc4; color: #ffffff;':' background: transparent; color: rgba(255,255,255,0.65);')+'">'+t.label+'</button>';}).join('');
+    document.getElementById('eu-intro').textContent=f.intro;
+    document.getElementById('eu-steps').innerHTML=f.steps.map(function(s,i){return '<li style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid #303030; border-radius: 14px; background: #141414;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #6b3bc4; color: #ffffff; font-size: 14px; font-weight: 600;">'+(i+1)+'</span><span style="'+TAG[s.status]+'">'+s.status+'</span></div><span style="font-size: 18px; font-weight: 600; color: #ffffff;">'+esc(s.title)+'</span><span style="font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.65);">'+esc(s.text)+'</span><span style="margin-top: auto; font-size: 13px; color: rgba(255,255,255,0.45);">'+esc(s.tool)+'</span></li>';}).join('');
+  }
+  document.getElementById('eu-tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-id]');if(!b)return;flow=b.getAttribute('data-id');render();});
+  document.getElementById('eu-tools').innerHTML=TOOLS.map(function(t){return '<div style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border: 1px solid #303030; border-radius: 12px; background: #141414;"><span style="font-size: 17px; font-weight: 600; color: #ffffff;">'+esc(t.name)+'</span><span style="font-size: 14px; color: rgba(255,255,255,0.65);">'+esc(t.role)+'</span></div>';}).join('');
+  render();
+})();
+</script>
+</body>
+</html>
