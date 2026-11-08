@@ -1,4 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}body.emb .loader{display:none}
+body.emb .panel,body.emb .views,body.emb .card{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+body.emb.emb-ui .panel,body.emb.emb-ui .views{opacity:1;transform:none;pointer-events:auto}
+body.emb.emb-ui .card.open{opacity:1;transform:none;pointer-events:auto}
+body.emb .views{top:calc(68px + env(safe-area-inset-top,0px))}
+</style></head><body>
 <!doctype html>
 <html lang="en">
 <head>
@@ -1004,10 +1009,34 @@ function wire(){
     setEnv(ENVS[envId] ? envId : "studio");
     const f = fit();
     camera.position.set(-40*f, 36*f, 46*f); controls.target.set(0,0,0); controls.update();
-    view("angle");
+    const EMB = new URLSearchParams(location.search);
+    if (EMB.get("embed")){
+      document.body.classList.add("emb");
+      setEnv("day");
+      $("layers").hidden = true; $("layersBtn").setAttribute("aria-pressed","false");
+      const az = +EMB.get("az") || -0.6, po = +EMB.get("po") || 0.95, di = +EMB.get("d") || 115;
+      camera.position.copy(new THREE.Vector3().setFromSphericalCoords(di, Math.max(0.05, po), az)); controls.target.set(0,0,0); controls.update();
+      shellOpacity = 1; winOpacity = 1; applyShell();
+      let opened = false;
+      const openUp = () => {
+        if (opened) return; opened = true;
+        view("angle"); if (anim) anim.dur = 1900;
+        const t0 = performance.now();
+        const step = now => {
+          const k = Math.min(1, (now - t0) / 1700), e = k*k*(3-2*k);
+          shellOpacity = 1 - 0.7*e; winOpacity = 1 - 0.8*e; applyShell();
+          if (k < 1) requestAnimationFrame(step);
+          else { $("shellOp").value = 30; $("shellOut").textContent = "30%"; $("winOp").value = 20; $("winOut").textContent = "20%"; document.body.classList.add("emb-ui"); }
+        };
+        setTimeout(() => requestAnimationFrame(step), 250);
+      };
+      addEventListener("message", e => { if (e.data && e.data.cabin === "open") openUp(); });
+      if (parent === window) setTimeout(openUp, 400);
+    } else view("angle");
     wire();
     requestAnimationFrame(loop);
     $("loader").classList.add("done");
+    if (EMB.get("embed") && parent !== window) requestAnimationFrame(() => requestAnimationFrame(() => parent.postMessage({ cabin: "ready" }, "*")));
   }catch(err){
     console.error(err);
     $("err").textContent = err.message || String(err);
