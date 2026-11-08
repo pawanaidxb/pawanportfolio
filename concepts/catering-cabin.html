@@ -3,6 +3,7 @@ body.emb .panel,body.emb .views,body.emb .card{opacity:0;transform:translateY(10
 body.emb.emb-ui .panel,body.emb.emb-ui .views{opacity:1;transform:none;pointer-events:auto}
 body.emb.emb-ui .card.open{opacity:1;transform:none;pointer-events:auto}
 body.emb .views{top:calc(68px + env(safe-area-inset-top,0px))}
+html.ovl,html.ovl body{background:transparent!important}
 </style></head><body>
 <!doctype html>
 <html lang="en">
@@ -191,7 +192,7 @@ button{font:inherit;color:inherit}
 </style>
 </head>
 <body>
-<div id="stage" aria-label="3D cabin of a double-deck wide-body aircraft. Seats are coloured by meal pre-order status."></div>
+<script>window.__OVL=/[?&]ovl=1/.test(location.search);if(window.__OVL)document.documentElement.classList.add("ovl");</script><div id="stage" aria-label="3D cabin of a double-deck wide-body aircraft. Seats are coloured by meal pre-order status."></div>
 
 <aside class="panel" id="panel">
   <button class="sheet-toggle" id="sheetToggle" aria-label="Expand or collapse the passenger panel"><span></span></button>
@@ -645,6 +646,7 @@ function setEnv(id){
   document.body.dataset.env = id;
   document.querySelectorAll(".envbtn").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.env===id)));
   try { localStorage.setItem("cabin-env", id); } catch(_){}
+  if (window.__OVL){ skyMat.visible = false; floorGrp.visible = false; cloudMesh.visible = false; starPts.visible = false; keyL.castShadow = false; }
   needsRender = true;
 }
 function envTick(now, dt){
@@ -667,7 +669,7 @@ function applyWall(){
 }
 function applyShell(){
   for (const m of shellMeshes) m.visible = shellOn && shellOpacity > 0.001;
-  for (const m of gearMeshes) m.visible = shellOn && shellOpacity > 0.001 && (!env || !!env.floor);
+  for (const m of gearMeshes) m.visible = shellOn && shellOpacity > 0.001 && (!env || !!env.floor || window.__OVL);
   const w = winOn ? winOpacity : 0;
   winU.value = w;
   for (const mat of shellMats){
@@ -892,7 +894,8 @@ function resize(){
   const w = stage.clientWidth, h = stage.clientHeight;
   renderer.setSize(w,h,false); camera.aspect = w/h;
   const p = $("panel");
-  if (w > 760) camera.setViewOffset(w, h, -Math.round((p.offsetWidth+16)/2), 0, w, h);
+  if (window.__OVL) camera.clearViewOffset();
+  else if (w > 760) camera.setViewOffset(w, h, -Math.round((p.offsetWidth+16)/2), 0, w, h);
   else camera.setViewOffset(w, h, 0, Math.round(p.offsetHeight/2), w, h);
   camera.updateProjectionMatrix(); needsRender=true;
 }
@@ -922,7 +925,7 @@ function loop(now){
   }
   if (envTick(now, now - (loop.last||now))) needsRender = true; loop.last = now;
   if (controls.update()) needsRender = true;
-  if (needsRender){ renderer.render(scene, camera); placeAreaLabels(); needsRender=false; }
+  if (needsRender){ renderer.render(scene, camera); placeAreaLabels(); needsRender=false; if (window.__OVL && parent !== window) parent.postMessage({ cabin:"cam", p:camera.position.toArray(), t:controls.target.toArray() }, "*"); }
 }
 
 /* ---------- Wire up ---------- */
@@ -1010,7 +1013,37 @@ function wire(){
     const f = fit();
     camera.position.set(-40*f, 36*f, 46*f); controls.target.set(0,0,0); controls.update();
     const EMB = new URLSearchParams(location.search);
-    if (EMB.get("embed")){
+    if (window.__OVL){
+      document.body.classList.add("emb");
+      setEnv("day");
+      $("layers").hidden = true; $("layersBtn").setAttribute("aria-pressed","false");
+      shellOpacity = 1; winOpacity = 1; applyShell();
+      scene.updateMatrixWorld(true);
+      const bb = new THREE.Box3(); for (const m of shellMeshes) bb.expandByObject(m);
+      const gb = bb.clone(); for (const m of gearMeshes){ const v = m.visible; m.visible = true; gb.expandByObject(m); m.visible = v; }
+      window.__BB = { B:[(bb.min.x+bb.max.x)/2, gb.min.y, (bb.min.z+bb.max.z)/2], L: bb.max.x - bb.min.x };
+      let opened = false;
+      const openUp = () => {
+        if (opened) return; opened = true;
+        const t0 = performance.now();
+        const step = now => {
+          const k = Math.min(1, (now - t0) / 1600), e = k*k*(3-2*k);
+          shellOpacity = 1 - 0.7*e; winOpacity = 1 - 0.8*e; applyShell();
+          if (k < 1) requestAnimationFrame(step);
+          else { $("shellOp").value = 30; $("shellOut").textContent = "30%"; $("winOp").value = 20; $("winOut").textContent = "20%"; document.body.classList.add("emb-ui"); }
+        };
+        requestAnimationFrame(step);
+      };
+      addEventListener("message", e => {
+        const d = e.data || {};
+        if (d.cabin === "open") openUp();
+        if (d.cabin === "setcam"){
+          if (d.fov){ camera.fov = d.fov; camera.updateProjectionMatrix(); }
+          anim = null; camera.position.fromArray(d.p); controls.target.fromArray(d.t); controls.update(); needsRender = true;
+          requestAnimationFrame(() => requestAnimationFrame(() => parent.postMessage({ cabin:"camset" }, "*")));
+        }
+      });
+    } else if (EMB.get("embed")){
       document.body.classList.add("emb");
       setEnv("day");
       $("layers").hidden = true; $("layersBtn").setAttribute("aria-pressed","false");
@@ -1036,7 +1069,7 @@ function wire(){
     wire();
     requestAnimationFrame(loop);
     $("loader").classList.add("done");
-    if (EMB.get("embed") && parent !== window) requestAnimationFrame(() => requestAnimationFrame(() => parent.postMessage({ cabin: "ready" }, "*")));
+    if ((EMB.get("embed") || window.__OVL) && parent !== window) requestAnimationFrame(() => requestAnimationFrame(() => parent.postMessage({ cabin: "ready", bb: window.__BB }, "*")));
   }catch(err){
     console.error(err);
     $("err").textContent = err.message || String(err);
